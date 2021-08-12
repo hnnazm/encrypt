@@ -1,0 +1,76 @@
+h1,
+h2,
+p {
+  text-align: center;
+}
+
+h1 {
+}
+
+main > h1,
+main > p {
+  color: var(--orange);
+}
+
+.container-input {
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.container-result {
+  width: 70%;
+  padding: 0.2em 0.5em; 
+  margin: 1em;
+  align-self: center;
+  border: solid 1px var(--white);
+}
+
+.container-result > p {
+  color: var(--white);
+  line-height: 2em;
+  text-align: left;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form > input {
+  padding: 0.2em 0.5em;
+  color: var(--blue);
+  background-color: var(--white);
+  font-size: 2em;
+  margin-bottom: 0.5em;
+  border: none;
+  border-radius: 15px;
+  text-align: center;
+}
+
+form > input:focus {
+  outline: none;
+}
+
+form > button {
+  align-self: center;
+  padding: 0.5em;
+  color: var(--white);
+  background-color: var(--green);
+  font-size: 1em;
+  border: solid 1px var(--blue);
+  border-radius: 8px;
+}
+
+@media (max-width: 450px) {
+  form > input {
+    padding: 0.2em 0.5em;
+    font-size: 1.5em;
+  }
+
+  .container-result {
+    width: 100%;
+    overflow-y: scroll;
+  }
+}
