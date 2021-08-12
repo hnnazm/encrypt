@@ -1,0 +1,32 @@
+header {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--red);
+}
+
+#container-branding {
+  display: flex;
+  justify-content: space-between;
+  flex-basis: 1 1 25%;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  flex-basis: 1 1 20%;
+}
+
+nav a {
+  margin-right: 1em;
+  color: var(--white);
+  font-size: 1.2em;
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: var(--blue);
+  font-size: 1.2em;
+  text-decoration: underline;
+}
