@@ -1,70 +1,97 @@
-# Getting Started with Create React App
+# Encryption Application
+This website is created solely for the purpose of coding assessment at INVOKE.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Design Approach
+Try to organizing code to as modular as it could. I created new folders named `views`, `css`, `components`, and `utilities`. This should allow me to organise my code logically. All these folders are self-explained.
 
-In the project directory, you can run:
+- `views`: seperate each of the routes
+- `css`: contains all the css for each components and routes
+- `components`: logical piece of code to render
+- `utilities`: logical piece of code that perform a task
 
-### `yarn start`
+Separating these files and code make it easier for me to debug and also maintain if the codebase shall expands.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+I also created this website by using a function-based components for the React. I am more comfortable using this method because in my opinion, it is much more natural approach and there is less abstraction in JavaScript code compared to the class-based components.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `yarn test`
+### Technology Stack
+1. NodeJS
+2. DigitalOcean App
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
+### Dependencies
+1. Core React Library
+2. react-router-dom
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Random Key
+The random key generator function is very straightforward and there is no need to use external library for this simple use case. I just used the built in `random` function in the NodeJS `Math` module.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```javascript
+export function generateRandom(MIN, MAX) {
+  return (Math.floor(Math.random() * MAX) + MIN).toString().split('')
+}
+```
 
-### `yarn eject`
+`Math.random()` will return a random number ranging from 0 to 1. That is why I need to multiply it by the `MAX` value to get a number that does not exceed the maximum value given. I also needed to add `MIN` value so that the number will not be below the minimum value given. Since the function will return a float value, I need to convert it to a integer value to get a proper random number that will used for the next step. Last but not least this function will return an array of single digit number (in String).
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Encryption Algorithm
+The algorithm described in the task is most probably Caesar Cipher technique.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```javascript
+const ALBHABET_NUM = 26   // alphabet letters amount
+const VOWELS = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+export function encrypt(originalText, randomKey) {
+return originalText
+    .split('')
+    .map(letter => {
+      if (letter.match(/[a-z]/i)) {   // match regex case insensitive
+        let characterCode = letter.charCodeAt()
+        let shift = characterCode >= 65 && characterCode <= 90 ? 65 :
+          characterCode >= 97 && characterCode <= 122 ? 97 : 0
 
-## Learn More
+        if (VOWELS.includes(letter))
+          return String.fromCharCode(((characterCode - shift + parseInt(randomKey[0]))
+            % ALBHABET_NUM) + shift)
+        else
+          return String.fromCharCode(((characterCode - shift + parseInt(randomKey[1]))
+            % ALBHABET_NUM) + shift)
+      }
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+      return letter   // if the letter is non-character, just return as it is
+    })
+    .join('')
+}
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This function need to receive two arguments, which are the a `String` of original text to be encrypted and an `Array` of number that need for the shifting of the characters.
 
-### Code Splitting
+`split()` function will split the original text given into an array of characters. Then the array is passed to the `map()` method that will loop this array and perform a function on each character. `map()` function receive only one arguments which is the a function that have a parameter of member of the array that was on iteration.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+The first thing that will be execute inside the function is to compared whether it is an alphabet. I used a regex to compared the alphabet and its case. If it is matched, then it will be further compared whether the character is a vowel or consonant. Then it will do a proper shifting defined in the requirements.
 
-### Analyzing the Bundle Size
+In order to shift a character, we need to know its character code as defined in the ASCII table. But the most important information needed for this encryption are as follows:
+- Letter 'A' starts at 65 
+- Letter 'Z' ends at 90
+- Letter 'z' starts at 97
+- Letter 'z' ends at 122
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```javascript
+let shift = characterCode >= 65 && characterCode <= 90 ? 65 : characterCode >= 97 && characterCode <= 122 ? 97 : 0
+```
 
-### Making a Progressive Web App
+This line of code is used to determined the boundary in the ASCII table in order to shift the character. We don't want to get any other character (i.e. symbols) besides alphabets in the ASCII table.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+The following piece of code perform the shifting based on the character code and the boundary that had been determined. I just add the character code by the random number generated to shift the character.
 
-### Advanced Configuration
+Lastly, I joined the array back to string and return it.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## References
+- [React Documentation](https://reactjs.org)
+- [react-router-dom documentation](https://reactrouter.com)
+- [Caesar cipher](https://en.wikipedia.org/wiki/Caesar_cipher)
+- [ASCII table](https://www.asciitable.com)
+- [StackOverflow Question](https://stackoverflow.com/a/33085029)
