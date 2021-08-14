@@ -10,9 +10,11 @@ function Home() {
   const [randomKey, setRandomKey] = useState(null)
   const [originalText, setOriginalText] = useState('')
   const [encryptedText, setEncryptedText] = useState('')
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    setIsLoading(true);
 
     let string = e.target[0].value
     const key = generateRandom(MIN, MAX)
@@ -22,6 +24,7 @@ function Home() {
     setEncryptedText(encrypt(string, key))
 
     e.target[0].value = ''
+    setIsLoading(false);
   }
 
 
@@ -37,6 +40,9 @@ function Home() {
       <div className="container-input">
         <div className="container-result">
           <h2>Result</h2>
+          {isLoading &&
+              <small>Loading..</small>
+          }
           <p>
             <strong>Random key :</strong> {randomKey}
           </p>
